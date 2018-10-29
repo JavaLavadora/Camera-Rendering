@@ -1,28 +1,132 @@
 
 Camera cam;
-CircularList c = new CircularList();
+
+PShape tri1;
+PShape hex1;
+PShape ngon1;
+PShape monster;
+int numFaces;
 
 boolean first = false;
 float view = 0;
 
-
 //Circular list
+CircularList c = new CircularList();
 int indexTarget = 1;
 int sizeList = 0;
 
 
 void setup() {
-  size(1400, 800, P3D);
+  size(1600, 1000, P3D);
   perspective(radians(50.0f), width/(float)height, 0.1, 1000);
   background(220, 220, 220);
 
+  tri1 = createShape();
+  tri1.beginShape(TRIANGLES);
+  //Face1
+  tri1.fill(255, 255, 0);
+  tri1.vertex(-0.5, 0.5, 0.5);
+  tri1.vertex(0.5, 0.5, 0.5);
+  tri1.vertex(-0.5, -0.5, 0.5);
+  tri1.fill(0, 255, 0);
+  tri1.vertex(0.5, 0.5, 0.5);
+  tri1.vertex(0.5, -0.5, 0.5);
+  tri1.vertex(-0.5, -0.5, 0.5);
+
+  //Face2
+  tri1.fill(255, 0, 255);
+  tri1.vertex(-0.5, 0.5, -0.5);
+  tri1.vertex(0.5, 0.5, -0.5);
+  tri1.vertex(-0.5, -0.5, -0.5);
+  tri1.fill(0, 255, 255);
+  tri1.vertex(0.5, 0.5, -0.5);
+  tri1.vertex(0.5, -0.5, -0.5);
+  tri1.vertex(-0.5, -0.5, -0.5);
+
+  //Face3
+  tri1.fill(120, 255, 120);
+  tri1.vertex(-0.5, 0.5, -0.5);
+  tri1.vertex(-0.5, 0.5, 0.5);
+  tri1.vertex(-0.5, -0.5, -0.5);
+  tri1.fill(0, 100, 120);
+  tri1.vertex(-0.5, 0.5, 0.5);
+  tri1.vertex(-0.5, -0.5, 0.5);
+  tri1.vertex(-0.5, -0.5, -0.5);
+
+  //Face4
+  tri1.fill(255, 100, 100);
+  tri1.vertex(0.5, 0.5, -0.5);
+  tri1.vertex(0.5, 0.5, 0.5);
+  tri1.vertex(0.5, -0.5, -0.5);
+  tri1.fill(200, 50, 0);
+  tri1.vertex(0.5, 0.5, 0.5);
+  tri1.vertex(0.5, -0.5, 0.5);
+  tri1.vertex(0.5, -0.5, -0.5);
+
+  //Face5 (BOTTOM)
+  tri1.fill(50, 50, 50);
+  tri1.vertex(-0.5, 0.5, 0.5);
+  tri1.vertex(-0.5, 0.5, -0.5);
+  tri1.vertex(0.5, 0.5, -0.5);
+  tri1.fill(200, 50, 0);
+  tri1.vertex(0.5, 0.5, -0.5);
+  tri1.vertex(0.5, 0.5, 0.5);
+  tri1.vertex(-0.5, 0.5, 0.5);
+
+  //Face6 (TOP)
+  tri1.fill(200, 100, 250);
+  tri1.vertex(-0.5, -0.5, 0.5);
+  tri1.vertex(-0.5, -0.5, -0.5);
+  tri1.vertex(0.5, -0.5, -0.5);
+  tri1.fill(20, 200, 100);
+  tri1.vertex(0.5, -0.5, -0.5);
+  tri1.vertex(0.5, -0.5, 0.5);
+  tri1.vertex(-0.5, -0.5, 0.5);
+
+  tri1.endShape();
+
+  hex1 = createShape();
+  hex1.beginShape(TRIANGLE_FAN);
+
+  hex1.fill(255, 0, 0);
+  hex1.vertex(2, -sqrt(3), 0);
+  hex1.fill(255,20,147);
+  hex1.vertex(1, -2*sqrt(3), 0);
+  hex1.fill(0, 0, 255);
+  hex1.vertex(-1, -2*sqrt(3), 0);
+  
+  hex1.fill(255, 0, 0);
+  hex1.vertex(2, -sqrt(3), 0);
+  hex1.fill(0, 0, 255);
+  hex1.vertex(-1, -2*sqrt(3), 0);
+  hex1.fill(0,191,255);
+  hex1.vertex(-2, -sqrt(3), 0);
+  
+  hex1.fill(255, 0, 0);
+  hex1.vertex(2, -sqrt(3), 0);
+  hex1.fill(0,191,255);
+  hex1.vertex(-2, -sqrt(3), 0);
+  hex1.fill(0, 255, 0);
+  hex1.vertex(-1, 0, 0);
+  
+  hex1.fill(255, 0, 0);
+  hex1.vertex(2, -sqrt(3), 0);
+  hex1.fill(0, 255, 0);
+  hex1.vertex(-1, 0, 0);
+  hex1.fill(255, 255, 0);
+  hex1.vertex(1, 0, 0);
+  
+  hex1.endShape();
+  
+  monster = loadShape("monster.obj");
+  numFaces = monster.getChildCount();
 }
 
 void draw() {
   background(220, 220, 220);
 
   //Set grid
-  for (int i = (width/2)-100; i< (width/2)+100; i = i + 10) {
+  for (int i = (width/2)-100; i <= (width/2)+100; i = i + 10) {
     if (i == width/2) {
       stroke(0, 0, 255);
     } else {
@@ -32,7 +136,7 @@ void draw() {
     line(i, height/2, -100, i, height/2, 100);
   }
 
-  for (int i = -100; i < 100; i = i + 10) {
+  for (int i = -100; i <= 100; i = i + 10) {
 
     if (i == 0) {
       stroke(255, 0, 0);
@@ -42,134 +146,90 @@ void draw() {
 
     line((width/2)-100, height/2, i, (width/2)+100, height/2, i);
   }
+  
+  
+  //REGULAR MONSTER (half scale)
+  pushMatrix();
+  translate((width/2), height/2, 0);
+  scale(0.5);
+  rotate(PI);
+  monster.setFill(color(107,142,35));
+  shape(monster);
+  popMatrix();
+  
+  //WIRE MONSTER
+  pushMatrix();
+  translate((width/2)+75, height/2, 0);
+  rotate(PI);
+  drawWire();
+  popMatrix();
+  
+  //HEXAGON
+  pushMatrix();
+  translate((width/2)-(40-sqrt(3)), height/2-sqrt(3), 0);
+  scale(3, 3, 3);
+  shape(hex1);
+  popMatrix();
+  
+  //NGON
+  pushMatrix();
+  translate((width/2)-(60), height/2-7, 0);
+  ngon(20);
+  popMatrix();
+  
+  //CUBES
+  translate((width/2)-100, height/2, 0);
+  pushMatrix();
+  scale(5, 5, 5);
+  shape(tri1);
+  popMatrix();
+
+  pushMatrix();
+  translate(-10, 0, 0);
+  shape(tri1);
+  popMatrix();
+
+  pushMatrix();
+  translate(10, 0, 0);
+  scale(10, 20, 10);
+  shape(tri1);
+  popMatrix();
+
+
+
 
   if (!first) {
     cam = new Camera((float)(width/2), (height/2)-200, width/2, width/2, height/2, 0.0);
-    
-    PVector p = new PVector (width/2-100, height/2, 0);
+
+    PVector p = new PVector (width/2+75, height/2, 0);
     cam.addLookTarget(p);
+    
     p.x = width/2;
     p.y = height/2;
     p.z = 0;
-    
     cam.addLookTarget(p);
-    p.x = width/2+100;
+    
+    p.x = width/2-50;
     p.y = height/2;
     p.z = 0;
-    
     cam.addLookTarget(p);
-    
-    c.print();
+  
+    p.x = width/2-100;
+    p.y = height/2;
+    p.z = 0;
+    cam.addLookTarget(p);
     
     first = true;
   }
 
 
   cam.update(mouseX, mouseY);
-
 }
 
 
-//-------- CAMERA ----------
-class Camera {
 
-  float posX, posY, posZ;
-  PVector target = new PVector(0, 0, 0);
-
-  Camera(float pX, float pY, float pZ, float tarX, float tarY, float tarZ) {
-    //println("Camera");
-    posX = pX;
-    posY = pY;
-    posZ = pZ;
-    target.x = tarX;
-    target.y = tarY;
-    target.z = tarZ;
-    camera(posX, posY, posZ, target.x, target.y, target.z, 0, 1, 0);
-  }
-
-
-  void update(float mX, float mY) {
-    //Check current target
-    PVector paux = c.elementAt(indexTarget);
-    target.x = paux.x;
-    target.y = paux.y;
-    target.z = paux.z;
-    
-    //Get radius: offset between camera and target (RANGE: 30 to 200)
-    float radius = (posX - target.x)*(posX - target.x) + (posY - target.y)*(posY - target.y) + (posZ - target.z)*(posZ - target.z);
-    radius = sqrt(radius);
-    //Set range for radius
-    if (radius < 30) {
-      radius = 30;
-    }
-    if (radius > 200) {
-      radius = 200;
-    }
-
-    //println("radius is:" + radius);
-    //Get Phi: depends on MouseX (RANGE MAP: 0 to 360)
-    float phi = map(mX, 0, width-1, 0, 360);
-    //println("phi is:" + phi);
-    //Get Theta: depends on MouseY (RANGE MAP: 0 to 179)
-    float theta = map(mY, 0, height-1, 0, 179);
-    //println("theta is:" + theta);
-    //Calculate derivedXYZ
-    float derivedX = radius * cos(phi * (PI/180)) * sin(theta * (PI/180));
-    //println("dX is:" + derivedX);
-    float derivedY = radius * cos(theta * (PI/180));
-    //println("dY is:" + derivedY);
-
-    float derivedZ = radius * sin(phi * (PI/180)) * sin(theta * (PI/180));
-    //println("dZ is:" + derivedZ);
-
-    //Calculate new values for camera
-    posX = target.x + derivedX; 
-    posY = target.y + derivedY; 
-    posZ = target.z + derivedZ;
-    //println("posX is: " + posX + " posY is: " + posY + "posZ is: " + posZ);
-
-
-    //Update Camera
-    camera(posX, posY, posZ, target.x, target.y, target.z, 0, 1, 0);
-  }
-
-  void addLookTarget(PVector newTarget) {
-    //Add to list
-    c.addNodeAtStart(newTarget);
-    sizeList++;
-  }
-
-  void cycleTarget() {
-    //Update current Target to next in list
-    //print("TARGET IS: " + indexTarget);
-    indexTarget++;
-    if(indexTarget > sizeList){
-      indexTarget = 1;
-    }
-    //println(" & NEW TARGET IS: " + indexTarget);
-    
-  }
-
-  void zoom (float val) {
-    //println(val);
-    if (val < 0) {
-      view--;
-      if(view < 10){
-        view = 10;
-      }
-    } else {
-      view++;
-      if(view > 90){
-        view = 90;
-      }
-    }
-    perspective(radians(view), width/(float)height, 0.1, 1000);
-  }
-  
-}
-
-void keyPressed(){
-  if(key == ' '){
+void keyPressed() {
+  if (key == ' ') {
     println("SPACE PRESSED");
     cam.cycleTarget();
   }
@@ -181,4 +241,39 @@ void mouseWheel(MouseEvent event) {
   float e = event.getCount();
   //println(e);
   cam.zoom(e);
+}
+
+
+void drawWire(){
+  beginShape(TRIANGLES);
+  for(int i = 0; i < numFaces; i++){
+    PShape child = monster.getChild(i);
+    int verticesOfFace = child.getVertexCount();
+    for(int j = 0; j < verticesOfFace; j++){
+      stroke(0);
+      fill(150, 0);
+      vertex(child.getVertexX(j), child.getVertexY(j), child.getVertexZ(j));
+    }
+  }
+  endShape();
+}
+
+void ngon(int n){
+  int radius = 7;
+  
+  beginShape(TRIANGLE_FAN);
+    for(int i = 0; i < n; i++){
+      if(i == 0){
+        fill(255, 0, 0);
+      }
+      if(i == n/3){
+        fill(0, 255, 0);
+      }
+      if(i == (n/3)*2){
+        fill(0, 0, 255);
+      }
+      vertex(radius * cos(2*PI*i/n), radius * sin(2*PI*i/n), 0);
+    }
+  endShape();
+  
 }
